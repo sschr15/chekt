@@ -1,4 +1,14 @@
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      publishMavenCentral:
+        type: boolean
+        default: true
+        description: 'Publish to Maven Central'
+      publishPlugin:
+        type: boolean
+        default: true
+        description: 'Publish to Gradle Plugin Portal'
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
@@ -18,6 +28,7 @@ jobs:
       - run: ./gradlew publishAllPublicationsToProjectLocalRepository \
              zipMavenCentralPortalPublication \
              releaseMavenCentralPortalPublication
+        if: ${{ inputs.publishMavenCentral }}
         env:
           MAVEN_CENTRAL_PORTAL_USERNAME: ${{ secrets.USERNAME }}
           MAVEN_CENTRAL_PORTAL_PASSWORD: ${{ secrets.PASSWORD }}
@@ -25,6 +36,7 @@ jobs:
           SIGNING_KEY: ${{ secrets.SECRET_KEY }}
 
       - run: ./gradlew :gradle-plugin:publishPlugins
+        if: ${{ inputs.publishPlugin }}
         env:
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
           GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
