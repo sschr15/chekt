@@ -25,8 +25,8 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew build
-      - run: ./gradlew publishAllPublicationsToProjectLocalRepository \
-             zipMavenCentralPortalPublication \
+      - run: ./gradlew publishAllPublicationsToProjectLocalRepository
+             zipMavenCentralPortalPublication
              releaseMavenCentralPortalPublication
         if: ${{ inputs.publishMavenCentral }}
         env:
