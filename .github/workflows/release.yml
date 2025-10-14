@@ -15,7 +15,9 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew build
-      - run: ./gradlew publish
+      - run: ./gradlew publishAllPublicationsToProjectLocalRepository \
+             zipMavenCentralPortalPublication \
+             releaseMavenCentralPortalPublication
         env:
           MAVEN_CENTRAL_PORTAL_USERNAME: ${{ secrets.USERNAME }}
           MAVEN_CENTRAL_PORTAL_PASSWORD: ${{ secrets.PASSWORD }}
