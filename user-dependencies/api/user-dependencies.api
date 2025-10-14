@@ -1,0 +1,91 @@
+public final class com/sschr15/utils/chekt/CollectionOverflowChecksKt {
+	public static final fun sum ([B)I
+	public static final fun sum ([I)I
+	public static final fun sum ([J)J
+	public static final fun sum ([S)I
+	public static final fun sumOfBytes (Ljava/lang/Iterable;)I
+	public static final fun sumOfBytes (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfBytes ([Ljava/lang/Byte;)I
+	public static final fun sumOfBytesToBytes ([BLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfBytesToInts ([BLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfBytesToLongs ([BLkotlin/jvm/functions/Function1;)J
+	public static final fun sumOfBytesToShorts ([BLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfCharsToBytes ([CLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfCharsToInts ([CLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfCharsToLongs ([CLkotlin/jvm/functions/Function1;)J
+	public static final fun sumOfCharsToShorts ([CLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfInts (Ljava/lang/Iterable;)I
+	public static final fun sumOfInts (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfInts ([Ljava/lang/Integer;)I
+	public static final fun sumOfIntsToBytes ([ILkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfIntsToInts ([ILkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfIntsToLongs ([ILkotlin/jvm/functions/Function1;)J
+	public static final fun sumOfIntsToShorts ([ILkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfLongs (Ljava/lang/Iterable;)J
+	public static final fun sumOfLongs (Lkotlin/sequences/Sequence;)J
+	public static final fun sumOfLongs ([Ljava/lang/Long;)J
+	public static final fun sumOfLongsToBytes ([JLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfLongsToInts ([JLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfLongsToLongs ([JLkotlin/jvm/functions/Function1;)J
+	public static final fun sumOfLongsToShorts ([JLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfShorts (Ljava/lang/Iterable;)I
+	public static final fun sumOfShorts (Lkotlin/sequences/Sequence;)I
+	public static final fun sumOfShorts ([Ljava/lang/Short;)I
+	public static final fun sumOfShortsToBytes ([SLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfShortsToInts ([SLkotlin/jvm/functions/Function1;)I
+	public static final fun sumOfShortsToLongs ([SLkotlin/jvm/functions/Function1;)J
+	public static final fun sumOfShortsToShorts ([SLkotlin/jvm/functions/Function1;)I
+	public static final fun sumToBytes (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToBytes (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToBytes ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToInts (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToInts (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToInts ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToLongs (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)J
+	public static final fun sumToLongs (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)J
+	public static final fun sumToLongs ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)J
+	public static final fun sumToShorts (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToShorts (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
+	public static final fun sumToShorts ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)I
+}
+
+public abstract interface annotation class com/sschr15/utils/chekt/ExportIr : java/lang/annotation/Annotation {
+}
+
+public final class com/sschr15/utils/chekt/IntLongOverflowChecksKt {
+	public static final fun abs (I)I
+	public static final fun abs (J)J
+	public static final fun dec (I)I
+	public static final fun dec (J)J
+	public static final fun inc (I)I
+	public static final fun inc (J)J
+	public static final fun minus (II)I
+	public static final fun minus (JJ)J
+	public static final fun plus (II)I
+	public static final fun plus (JJ)J
+	public static final fun rem (II)I
+	public static final fun rem (JJ)J
+	public static final fun times (II)I
+	public static final fun times (JJ)J
+	public static final fun toDouble (J)D
+	public static final fun toFloat (I)F
+	public static final fun toFloat (J)F
+	public static final fun toInt (J)I
+	public static final fun unaryMinus (I)I
+	public static final fun unaryMinus (J)J
+}
+
+public abstract interface annotation class com/sschr15/utils/chekt/Memoize : java/lang/annotation/Annotation {
+}
+
+public final class com/sschr15/utils/chekt/Platform_jvmKt {
+	public static final fun warnIfNegativeRem (II)V
+	public static final fun warnIfNegativeRem (JJ)V
+}
+
+public abstract interface annotation class com/sschr15/utils/chekt/SkipDestructuringChecks : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/sschr15/utils/chekt/SkipOverflowChecks : java/lang/annotation/Annotation {
+}
+
