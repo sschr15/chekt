@@ -22,11 +22,10 @@ jobs:
           ./gradlew publish
           ./gradlew jreleaserDeploy
         env:
-          JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.USERNAME }}
-          JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.PASSWORD }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.SIGNING_PASSWORD }}
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
-          JRELEASER_GPG_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          MAVEN_CENTRAL_PORTAL_USERNAME: ${{ secrets.USERNAME }}
+          MAVEN_CENTRAL_PORTAL_PASSWORD: ${{ secrets.PASSWORD }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SECRET_KEY }}
 
       - run: ./gradlew :gradle-plugin:publishPlugins
         env:

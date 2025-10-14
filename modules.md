@@ -7,7 +7,7 @@ calls to. To view that, see the Compilation Dependencies documentation or the so
 
 # Module Chekt Compilation Dependencies
 
-The compile-time dependencies for Chekt. This is necessary for the compiler plugin.
+The compile-time dependencies for Chekt. The non-filtered version of the User Dependencies documentation.
 
 All functions are meant for internal use by the compiler plugin. Annotations are the only
 public API, but the functions provided may be called by an end user.

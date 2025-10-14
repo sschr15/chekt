@@ -6,7 +6,7 @@ kotlin = "2.2.20"
 buildconfig = "5.6.5"
 binary-compatibility-validator = "0.16.3"
 dokka = "2.0.0"
-jreleaser = "1.20.0"
+publish-on-central = "9.1.5"
 gradle-plugin-publish = "2.0.0"
 
 [plugins]
@@ -15,5 +15,5 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binary-compatibility-validator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
+publish-on-central = { id = "org.danilopianini.publish-on-central", version.ref = "publish-on-central" }
 publishing = { id = "com.gradle.plugin-publish", version.ref = "gradle-plugin-publish" }
