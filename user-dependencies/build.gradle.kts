@@ -93,7 +93,14 @@ dokka {
     }
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    from(tasks.dokkaGenerate)
+    archiveClassifier = "javadoc"
+}
+
 publishing.publications.withType<MavenPublication> {
+    artifact(javadocJar)
+
     pom {
         name = "Chekt User Dependencies"
         description = "Compile-only dependencies for Chekt"
