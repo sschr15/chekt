@@ -126,19 +126,3 @@ val maven by publishing.publications.creating(MavenPublication::class) {
         }
     }
 }
-
-signing {
-    isRequired = true
-
-    if (System.getenv("SIGNING_KEY") != null) {
-        useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
-    } else {
-        useGpgCmd()
-    }
-
-    sign(publishing.publications)
-}
-
-tasks.withType<AbstractPublishToMaven> {
-    mustRunAfter(tasks.withType<Sign>())
-}

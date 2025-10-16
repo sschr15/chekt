@@ -6,11 +6,32 @@ plugins {
     alias(libs.plugins.nmcp) apply false
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.dokka)
+    signing
+    `maven-publish`
 }
 
 allprojects {
+    apply(plugin = "signing")
+    apply(plugin = "maven-publish")
+
     group = "com.sschr15.chekt"
     version = rootProject.libs.versions.project.get()
+
+    signing {
+        isRequired = true
+
+        if (System.getenv("SIGNING_KEY") != null) {
+            useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
+        } else {
+            useGpgCmd()
+        }
+
+        sign(publishing.publications)
+    }
+
+    tasks.withType<AbstractPublishToMaven> {
+        mustRunAfter(tasks.withType<Sign>())
+    }
 }
 
 dependencies {
