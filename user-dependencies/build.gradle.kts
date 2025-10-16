@@ -93,11 +93,7 @@ dokka {
     }
 }
 
-val maven by publishing.publications.creating(MavenPublication::class) {
-    artifactId = "user-dependencies"
-
-    from(components["kotlin"])
-
+publishing.publications.withType<MavenPublication> {
     pom {
         name = "Chekt User Dependencies"
         description = "Compile-only dependencies for Chekt"

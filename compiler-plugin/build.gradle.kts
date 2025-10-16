@@ -64,7 +64,7 @@ val allDocJar by tasks.registering(Jar::class) {
     archiveClassifier = "javadoc-all"
 }
 
-val maven by publishing.publications.creating(MavenPublication::class) {
+val maven by publishing.publications.registering(MavenPublication::class) {
     artifactId = "compiler-plugin"
 
     from(components["kotlin"])
