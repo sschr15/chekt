@@ -28,6 +28,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
         with:
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+      - uses: actions/cache@v4
+        with:
+          path: ~/.konan/dependencies/cache
+          key: ${{ runner.os }}-konan-dependencies-cache
       - run: ./gradlew build
       - run: ./gradlew publishAggregationToCentralPortal
         if: ${{ inputs.publishMavenCentral }}
