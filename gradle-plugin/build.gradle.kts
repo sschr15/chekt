@@ -49,7 +49,7 @@ gradlePlugin {
         create("ChektPlugin") {
             id = rootProject.group.toString()
             displayName = "ChektPlugin"
-            description = "ChektPlugin"
+            description = "Applies the Chekt compiler plugin to Kotlin, providing integer overflow and destructuring checks and a memoization annotation"
             implementationClass = "com.sschr15.chekt.gradle.ChektGradlePlugin"
             tags = listOf(
                 "kotlin", "compiler-plugin"
