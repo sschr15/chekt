@@ -3,10 +3,11 @@ import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.buildconfig)
-    alias(libs.plugins.publish.on.central)
+    alias(libs.plugins.nmcp)
     alias(libs.plugins.dokka)
     `maven-publish`
-    
+    signing
+
     kotlin("plugin.power-assert") version "2.2.20"
 }
 
@@ -53,37 +54,54 @@ dokka {
     }
 }
 
+val javadocJar by tasks.registering(Jar::class) {
+    from(tasks.dokkaGenerate)
+    archiveClassifier = "javadoc"
+}
+
 val allDocJar by tasks.registering(Jar::class) {
     from(rootProject.tasks.dokkaGenerate)
     archiveClassifier = "javadoc-all"
 }
 
-publishOnCentral {
-    repoOwner = "sschr15"
-    projectDescription = "Main Chekt artifact - a Kotlin compiler plugin"
-    licenseName = "MIT"
-    licenseUrl = "https://opensource.org/license/MIT"
-}
+val maven by publishing.publications.creating(MavenPublication::class) {
+    artifactId = "compiler-plugin"
 
-publishing {
-    publications {
-        withType<MavenPublication> {
-            artifact(allDocJar)
+    from(components["kotlin"])
+    artifact(tasks.kotlinSourcesJar)
+    artifact(javadocJar)
+    artifact(allDocJar)
 
-            pom {
-                developers {
-                    developer {
-                        name = "sschr15"
-                        email = "me@sschr15.com"
-                        url = "https://github.com/sschr15"
-                        timezone = "America/Chicago"
-                    }
-                }
+    pom {
+        name = "Chekt Compiler Plugin"
+        description = "Main Chekt artifact - a Kotlin compiler plugin"
+        url = "https://github.com/sschr15/chekt"
+
+        licenses {
+            license {
+                name = "MIT"
+                url = "https://opensource.org/licenses/MIT"
             }
+        }
+
+        developers {
+            developer {
+                name = "sschr15"
+                email = "me@sschr15.com"
+                url = "https://github.com/sschr15"
+                timezone = "America/Chicago"
+            }
+        }
+
+        scm {
+            connection = this@pom.url.get().replace("https", "scm:git:git")
+            developerConnection = connection.get().replace("git://", "ssh://")
+            url = this@pom.url
         }
     }
 }
 
 signing {
     useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
+    sign(maven)
 }

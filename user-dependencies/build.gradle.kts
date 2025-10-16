@@ -8,8 +8,9 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.binary.compatibility.validator)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.publish.on.central)
+    alias(libs.plugins.nmcp)
     `maven-publish`
+    signing
 }
 
 kotlin {
@@ -92,30 +93,41 @@ dokka {
     }
 }
 
-publishOnCentral {
-    repoOwner = "sschr15"
-    projectDescription = "Compile-only dependencies for Chekt"
-    licenseName = "MIT"
-    licenseUrl = "https://opensource.org/license/MIT"
-}
+val maven by publishing.publications.creating(MavenPublication::class) {
+    artifactId = "user-dependencies"
 
-publishing {
-    publications {
-        withType<MavenPublication> {
-            pom {
-                developers {
-                    developer {
-                        name = "sschr15"
-                        email = "me@sschr15.com"
-                        url = "https://github.com/sschr15"
-                        timezone = "America/Chicago"
-                    }
-                }
+    from(components["kotlin"])
+
+    pom {
+        name = "Chekt User Dependencies"
+        description = "Compile-only dependencies for Chekt"
+        url = "https://github.com/sschr15/chekt"
+
+        licenses {
+            license {
+                name = "MIT"
+                url = "https://opensource.org/licenses/MIT"
             }
+        }
+
+        developers {
+            developer {
+                name = "sschr15"
+                email = "me@sschr15.com"
+                url = "https://github.com/sschr15"
+                timezone = "America/Chicago"
+            }
+        }
+
+        scm {
+            connection = this@pom.url.get().replace("https", "scm:git:git")
+            developerConnection = connection.get().replace("git://", "ssh://")
+            url = this@pom.url
         }
     }
 }
 
 signing {
     useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
+    sign(maven)
 }

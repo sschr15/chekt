@@ -25,13 +25,11 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew build
-      - run: ./gradlew publishAllPublicationsToProjectLocalRepository
-             zipMavenCentralPortalPublication
-             releaseMavenCentralPortalPublication
+      - run: ./gradlew publishAggregationToCentralPortal
         if: ${{ inputs.publishMavenCentral }}
         env:
-          MAVEN_CENTRAL_PORTAL_USERNAME: ${{ secrets.USERNAME }}
-          MAVEN_CENTRAL_PORTAL_PASSWORD: ${{ secrets.PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.PASSWORD }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SECRET_KEY }}
 
