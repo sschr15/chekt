@@ -2,7 +2,7 @@
 
 A Kotlin compiler plugin providing some useful-for-scripting checks.
 
-Current features include:
+## Current Features
 
 - Integer overflow and numeric precision checks
   - All integer operations have checks when working with both `Int` and `Long`, for built-in operations
@@ -28,6 +28,22 @@ Current features include:
 setting `KT_REM_WARNINGS` environment variable to `false` will disable the warning. On JS, setting any value to a
 cookie called `chekt.warnOnNegativeRemainder` will disable the warning.</small>
 
-Hopeful eventual features include:
-- enum-exhaustive maps
+## Usage
+
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/com.sschr15.chekt?label=Latest%20Release)](https://plugins.gradle.org/plugin/com.sschr15.chekt)
+
+Apply to a Gradle project:
+
+```kotlin
+plugins {
+    // kotlin("...") version "..."
+    id("com.sschr15.chekt") version "(Gradle plugin version)"
+}
+```
+
+This will automatically apply the compiler plugin.
+
+## Future Features
+
+- Enum-exhaustive functions and maps
 - whatever else I can think of
