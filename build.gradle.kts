@@ -12,7 +12,6 @@ plugins {
 
 allprojects {
     apply(plugin = "signing")
-    apply(plugin = "maven-publish")
 
     group = "com.sschr15.chekt"
     version = rootProject.libs.versions.project.get()
@@ -26,7 +25,8 @@ allprojects {
             useGpgCmd()
         }
 
-        sign(publishing.publications)
+        runCatching { sign(publishing.publications) }
+            .onFailure { if (it !is UnknownDomainObjectException) throw it }
     }
 
     tasks.withType<AbstractPublishToMaven> {

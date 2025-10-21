@@ -1,14 +1,14 @@
 package com.sschr15.chekt
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.konan.report
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -88,8 +88,8 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
 
         val collection = expression.arguments.first() ?: error("Expected collection")
 
-        if (expression.symbol.owner.parameters.singleOrNull { it.isDispatchReceiver || it.kind == IrParameterKind.ExtensionReceiver } != null) {
-            val type = collection.type
+        if (expression.symbol.owner.parameters.size == 1) {
+            val type = expression.symbol.owner.returnType
             if (type != context.irBuiltIns.intType && type != context.irBuiltIns.longType) return super.visitCall(expression)
 
             return context.irBuiltIns
@@ -199,17 +199,17 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
             }
 
             val primitiveType = expression.type.getPrimitiveType() ?: return super.visitCall(expression)
-            if (primitiveType != PrimitiveType.INT && primitiveType != PrimitiveType.LONG) return super.visitCall(
-                expression
-            )
+            if (primitiveType != PrimitiveType.INT && primitiveType != PrimitiveType.LONG) return super.visitCall(expression)
             if (expression.symbol.owner.name.asString() !in singleTypeChecks) return super.visitCall(expression)
             if (
-                (expression.arguments.size != 2 || expression.arguments[0] != expression.arguments[1]) &&
+                (expression.arguments.size != 2 || expression.arguments[0]?.type != expression.arguments[1]?.type) &&
                 (expression.arguments.size != 1 || expression.symbol.owner.name.asString() !in singleArgumentTypeChecks)
             ) {
                 config.report(
                     CompilerMessageSeverity.WARNING,
-                    "Unexpected number of arguments for ${expression.symbol.owner.name}, skipping"
+                    "Unexpected arguments for ${expression.symbol.owner.name}, skipping",
+                    expression.symbol.owner.fileOrNull?.let { expression.getCompilerMessageLocation(it) }
+                        ?: expression.getCompilerMessageLocation(file)
                 )
                 return super.visitCall(expression)
             }
@@ -231,7 +231,8 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
             config.report(
                 CompilerMessageSeverity.ERROR,
                 "Error while checking for overflow: ${e.stackTraceToString()}",
-                CompilerMessageLocation.create(file.path, file.fileEntry.getLineNumber(expression.startOffset), file.fileEntry.getColumnNumber(expression.startOffset), null)
+                expression.symbol.owner.fileOrNull?.let { expression.getCompilerMessageLocation(it) }
+                    ?: expression.getCompilerMessageLocation(file)
             )
             return expression
         }

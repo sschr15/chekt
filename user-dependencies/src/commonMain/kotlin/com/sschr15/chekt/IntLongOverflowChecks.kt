@@ -14,7 +14,7 @@ public inline fun plus(a: Int, b: Int): Int {
 
 public inline fun minus(a: Int, b: Int): Int {
     val res = a - b
-    if ((a xor res) and (b xor res) < 0) {
+    if ((a xor b) and (a xor res) < 0) {
         throw ArithmeticException("Integer overflow")
     }
     return res
@@ -74,7 +74,7 @@ public inline fun plus(a: Long, b: Long): Long {
 
 public inline fun minus(a: Long, b: Long): Long {
     val res = a - b
-    if ((a xor res) and (b xor res) < 0) {
+    if ((a xor b) and (a xor res) < 0) {
         throw ArithmeticException("Integer overflow")
     }
     return res
