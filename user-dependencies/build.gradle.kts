@@ -129,3 +129,5 @@ publishing.publications.withType<MavenPublication> {
         }
     }
 }
+
+signing.sign(publishing.publications)

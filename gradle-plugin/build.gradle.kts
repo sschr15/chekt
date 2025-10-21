@@ -76,3 +76,5 @@ tasks {
         archiveClassifier = "javadoc"
     }
 }
+
+signing.sign(publishing.publications)

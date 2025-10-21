@@ -100,3 +100,5 @@ val maven by publishing.publications.registering(MavenPublication::class) {
         }
     }
 }
+
+signing.sign(publishing.publications)

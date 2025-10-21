@@ -24,9 +24,6 @@ allprojects {
         } else {
             useGpgCmd()
         }
-
-        runCatching { sign(publishing.publications) }
-            .onFailure { if (it !is UnknownDomainObjectException) throw it }
     }
 
     tasks.withType<AbstractPublishToMaven> {
