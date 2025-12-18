@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class PluginRegistrar : CompilerPluginRegistrar() {
+    override val pluginId = "com.sschr15.chekt"
+
     override val supportsK2 = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
