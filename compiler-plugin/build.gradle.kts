@@ -37,8 +37,11 @@ buildConfig {
 
 kotlin {
     compilerOptions {
-        optIn.add("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
-        optIn.add("org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
+        optIn.addAll(
+            "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+            "org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI",
+            "org.jetbrains.kotlin.config.MessageCollectorAccess",
+        )
     }
 }
 

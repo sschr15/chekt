@@ -3,11 +3,10 @@ package com.sschr15.chekt
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.report
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
@@ -27,10 +25,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
 class OverflowChecker(private val context: IrPluginContext, private val config: CompilerConfiguration) : IrElementTransformerVoid() {
     private val typeSystem = IrTypeSystemContextImpl(context.irBuiltIns)
-    private val sequenceClass = context.referenceClass(ClassId(FqName("kotlin.sequences"), Name.identifier("Sequence")))!!
+    private val sequenceClass = context.finderForBuiltins().findClass(ClassId(FqName("kotlin.sequences"), Name.identifier("Sequence")))!!
     private val skipCheckAnnotation = FqName("com.sschr15.chekt.SkipOverflowChecks")
 
     private val singleTypeChecks = setOf(
@@ -65,7 +62,7 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
         return context.irBuiltIns
             .createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
             .irCall(
-                context.referenceFunctions(
+                context.finderForBuiltins().findFunctions(
                     CallableId(
                         FqName("com.sschr15.chekt"),
                         null,
@@ -95,7 +92,7 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
             return context.irBuiltIns
                 .createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
                 .irCall(
-                    context.referenceFunctions(CallableId(FqName("com.sschr15.chekt"), null, Name.identifier("sum")))
+                    context.finderForBuiltins().findFunctions(CallableId(FqName("com.sschr15.chekt"), null, Name.identifier("sum")))
                         .single { collection.type.isSubtypeOf(it.owner.parameters.single().type, typeSystem) }
                 ).apply {
                     arguments[0] = collection
@@ -113,12 +110,12 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
         if (output.typeOrFail !in outputTypes) return super.visitCall(expression)
 
         if (expression.symbol.owner.name.asString() == "sumBy") {
-            config.report(CompilerMessageSeverity.WARNING, "sumBy is deprecated. Overflow checking is silently replacing with sumOf.")
+            config.messageCollector.report(CompilerMessageSeverity.WARNING, "sumBy is deprecated. Overflow checking is silently replacing with sumOf.")
         }
 
         val newLambda = lambda.deepCopyWithSymbols(parent)
         return context.irBuiltIns.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
-            .irCall(context.referenceFunctions(CallableId(
+            .irCall(context.finderForBuiltins().findFunctions(CallableId(
                 FqName("com.sschr15.chekt"),
                 null,
                 Name.identifier("sumOf"),
@@ -138,7 +135,7 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
         if (primitiveType != PrimitiveType.INT && primitiveType != PrimitiveType.LONG) return null
         if (owner.name != absoluteValueName) return null
         return context.irBuiltIns.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
-            .irCall(context.referenceFunctions(CallableId(
+            .irCall(context.finderForBuiltins().findFunctions(CallableId(
                 FqName("com.sschr15.chekt"),
                 null,
                 Name.identifier("abs"),
@@ -155,8 +152,8 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
 
     override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         if (declaration.annotations.any { it.isAnnotationWithEqualFqName(FqName("com.sschr15.chekt.ExportIr")) }) {
-            config.report(CompilerMessageSeverity.WARNING, declaration.dumpKotlinLike())
-            config.report(CompilerMessageSeverity.WARNING, declaration.dump())
+            config.messageCollector.report(CompilerMessageSeverity.WARNING, declaration.dumpKotlinLike())
+            config.messageCollector.report(CompilerMessageSeverity.WARNING, declaration.dump())
         }
 
         if (declaration.annotations.any { it.isAnnotationWithEqualFqName(skipCheckAnnotation) })
@@ -205,7 +202,7 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
                 (expression.arguments.size != 2 || expression.arguments[0]?.type != expression.arguments[1]?.type) &&
                 (expression.arguments.size != 1 || expression.symbol.owner.name.asString() !in singleArgumentTypeChecks)
             ) {
-                config.report(
+                config.messageCollector.report(
                     CompilerMessageSeverity.WARNING,
                     "Unexpected arguments for ${expression.symbol.owner.name}, skipping",
                     expression.symbol.owner.fileOrNull?.let { expression.getCompilerMessageLocation(it) }
@@ -216,7 +213,7 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
 
             return context.irBuiltIns.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset)
                 .irCall(
-                    context.referenceFunctions(
+                    context.finderForBuiltins().findFunctions(
                         CallableId(
                             FqName("com.sschr15.chekt"),
                             null,
@@ -228,7 +225,7 @@ class OverflowChecker(private val context: IrPluginContext, private val config: 
                     if (expression.arguments.size == 2) arguments[1] = expression.arguments[1]
                 }
         } catch (e: Exception) {
-            config.report(
+            config.messageCollector.report(
                 CompilerMessageSeverity.ERROR,
                 "Error while checking for overflow: ${e.stackTraceToString()}",
                 expression.symbol.owner.fileOrNull?.let { expression.getCompilerMessageLocation(it) }

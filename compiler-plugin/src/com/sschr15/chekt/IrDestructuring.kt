@@ -5,14 +5,16 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.starProjectedType
@@ -37,8 +39,8 @@ class IrDestructuringFinder(
 
     private val collectionsSize = context.irBuiltIns.collectionClass.getPropertyGetter("size")!!
     private val illegalArgumentException = listOf(
-        context.referenceConstructors(ClassId(FqName("kotlin"), Name.identifier("IllegalArgumentException"))),
-        context.referenceConstructors(ClassId(FqName("java.lang"), Name.identifier("IllegalArgumentException"))),
+        context.finderForBuiltins().findConstructors(ClassId(FqName("kotlin"), Name.identifier("IllegalArgumentException"))),
+        context.finderForBuiltins().findConstructors(ClassId(FqName("java.lang"), Name.identifier("IllegalArgumentException"))),
     ).flatten().first { ctor ->
         ctor.owner
             .parameters
@@ -49,7 +51,11 @@ class IrDestructuringFinder(
             ?.matches("""^(kotlin|java\.lang)\.String$""".toRegex()) == true
     }
 
-    val destructuringMap = config.getMap(DestructuringFinder)
+    val destructuringMap = config.getMap(DestructuringFinderKey)
+    
+    init {
+        config.messageCollector.report(CompilerMessageSeverity.WARNING, destructuringMap.toString())
+    }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         if (declaration.annotations.any { it.isAnnotationWithEqualFqName(FqName("com.sschr15.chekt.SkipDestructuringChecks")) }) {
@@ -103,7 +109,7 @@ class IrDestructuringFinder(
             if (stat !is IrVariable) return@transformFlat null
             if (stat.name != SpecialNames.DESTRUCT) return@transformFlat null
             if (currentDestruct >= destructs.size) {
-                config.report(CompilerMessageSeverity.STRONG_WARNING, "Destructuring ${stat.dumpKotlinLike()}, but no destructuring count was provided")
+                config.messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "Destructuring ${stat.dumpKotlinLike()}, but no destructuring count was provided")
                 return@transformFlat null
             }
 
@@ -112,6 +118,8 @@ class IrDestructuringFinder(
                 runOnStatement(stat),
             )
         }
+        val newBody = context.irFactory.createBlockBody(declaration.body!!.startOffset, declaration.body!!.endOffset, statements)
+        declaration.body = newBody
         return super.visitFunction(declaration)
     }
 }
