@@ -52,10 +52,6 @@ class IrDestructuringFinder(
     }
 
     val destructuringMap = config.getMap(DestructuringFinderKey)
-    
-    init {
-        config.messageCollector.report(CompilerMessageSeverity.WARNING, destructuringMap.toString())
-    }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         if (declaration.annotations.any { it.isAnnotationWithEqualFqName(FqName("com.sschr15.chekt.SkipDestructuringChecks")) }) {
