@@ -65,8 +65,9 @@ class IrDestructuringFinder(
         if (declaration.body is IrSyntheticBody) return super.visitFunction(declaration) // synthetic bodies have no statements
         val statements = declaration.body?.statements?.toMutableList() ?: return super.visitFunction(declaration)
 
-        fun runOnStatement(stat: IrValueDeclaration): IrStatement {
+        fun runOnStatement(stat: IrValueDeclaration): IrStatement? {
             val expected = destructs[currentDestruct++]
+            if (expected == 0) return null // name-based destructuring support
             return context.irBuiltIns.createIrBuilder(stat.symbol, stat.startOffset, stat.endOffset).irBlock {
                 +irIfThen(
                     condition = irCall(context.irBuiltIns.andandSymbol).apply {
@@ -109,7 +110,7 @@ class IrDestructuringFinder(
                 return@transformFlat null
             }
 
-            listOf(
+            listOfNotNull(
                 stat,
                 runOnStatement(stat),
             )
